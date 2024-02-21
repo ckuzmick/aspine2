@@ -3,32 +3,60 @@
 import puppeteer from 'puppeteer';
 import { NextApiRequest } from 'next';
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 
 export async function POST(req: NextApiRequest, res: NextResponse) {
     const { username, password } = req.body;
+
+    const usernameString = String(username);
+    const passwordString = String(password);
+
+    let login_page;
+    let pageText;
+
     try {
-        const usernameString = String(username);
-        const passwordString = String(password);
+        login_page = await fetch("https://aspen.cpsd.us/aspen/logon.do")
+        pageText = await login_page.text();
 
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
+        const [, session_id] = /jsessionid=(.*?)"/.exec(
+            pageText
+        ) as RegExpExecArray;
 
-        await page.goto('https://aspen.cpsd.us/aspen/logon.do');
+        const [, apache_token] = /name="org.apache.struts.taglib.html.TOKEN" value="(.+)"/.exec(
+            pageText
+        ) as RegExpExecArray;
 
-        await page.type('input[name="username"]', usernameString);
-        await page.type('input[name="password"]', passwordString);
-        await Promise.all([
-            page.click('button[type="submit"]'),
-        ]);
+        const login_response = await (await fetch(
+            "https://aspen.cpsd.us/aspen/logon.do", {
+                headers: {
+                    "Cookie": `JSESSIONID=${session_id}`,
+                },
+                method: "POST",
+                redirect: "manual",
+                body: new URLSearchParams({
+                    "org.apache.struts.taglib.html.TOKEN": apache_token,
+                    "userEvent": "930",
+                    "deploymentId": "x2sis",
+                    "username": username,
+                    "password": password,
+                }),
+            }
+        )).text();
 
-        const pageTitle = await page.title();
-        console.log('Logged in, current page title:', pageTitle);
+        const classes_response = await (await fetch(
+            "https://aspen.cpsd.us/aspen/home.do?tab=classpage&studentContext=false", {
+                headers: {
+                    "Cookie": `JSESSIONID=${session_id}`,
+                },
+                method: "GET",
+            }
+        )).text();
 
-        const aspenCookies = await page.cookies();
+        console.log(classes_response)
 
-        await browser.close();
+        // Process the classes_response here
 
-        return NextResponse.json({ text: `Scraping is good, cookies: ${JSON.stringify(aspenCookies)}` }, { status: 200 })
+        return NextResponse.json({ text: `Classes response: ${classes_response}` }, { status: 200 });
     } catch (error) {
         console.error('Error during scraping:', error);
         if (res.status) {
