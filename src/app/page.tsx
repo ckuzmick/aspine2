@@ -6,21 +6,8 @@ export default function Home() {
   const [sessionId, setSessionId] = useState('');
 
   const handleLogin = async () => {
-    try {
-      const response = await fetch('/add_session_cookie/api', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ sessionId })
-      });
-      
-      if (response.ok) {
-        window.location.href = '/dashboard';
-      }
-    } catch (error) {
-      // Handle error here
-    }
+    document.cookie = `JSESSIONID=${sessionId}`; // Set the cookie with the sessionId
+    window.location.href = '/dashboard';
   };
 
   return (
