@@ -18,7 +18,7 @@ export default function Home() {
     if (response.ok) {
       const data = await response.json();
       console.log(data);
-      window.location.href = "/dashboard";
+      // window.location.href = "/dashboard";
     } else {
       console.log("Login failed");
     }
