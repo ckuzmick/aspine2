@@ -7,8 +7,8 @@ export default function Home() {
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
-    // const response = await fetch("/get_data/api", {
-    const response = await fetch("/get_data_dev/api", {
+    const response = await fetch("/get_data/api", {
+      // const response = await fetch("/get_data_dev/api", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
