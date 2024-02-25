@@ -1,7 +1,8 @@
 // Use server environment
 "use server";
 
-import { chromium } from "playwright"; // Import chromium for Playwright
+import * as playwright from "playwright-core";
+import * as playwrightAWS from "playwright-aws-lambda";
 import { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest) {
 
   try {
     // Launch the browser using Playwright's chromium instance
-    const browser = await chromium.launch({ headless: true });
+    const browser = await playwrightAWS.launchChromium();
     const context = await browser.newContext();
     const page = await context.newPage();
 
