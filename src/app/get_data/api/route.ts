@@ -1,18 +1,19 @@
+// Use server environment
 "use server";
 
-const puppeteer = require("puppeteer-core");
-const chromeLambda = require("chrome-aws-lambda");
+import { chromium } from "playwright"; // Import chromium for Playwright
 import { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 
+// Function to create a delay
 function delay(time: number) {
   return new Promise(function (resolve) {
     setTimeout(resolve, time);
   });
 }
 
-export async function POST(req: NextRequest, res: NextResponse) {
+// Async function to handle POST requests
+export async function POST(req: NextRequest) {
   const reqBody = await req.json();
 
   console.log(reqBody);
@@ -23,74 +24,60 @@ export async function POST(req: NextRequest, res: NextResponse) {
   const passwordString = String(password);
 
   try {
-    const browser = await puppeteer.launch({
-      executablePath: await chromeLambda.executablePath,
-      args: chromeLambda.args,
-      headless: true,
-    });
+    // Launch the browser using Playwright's chromium instance
+    const browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext();
+    const page = await context.newPage();
 
-    const page = await browser.newPage();
-
+    // Navigate to the login page
     await page.goto("https://aspen.cpsd.us/aspen/logon.do", {
-      waitUntil: "networkidle2",
+      waitUntil: "networkidle",
     });
 
-    await page.type("#username", usernameString);
-    await page.type("#password", passwordString);
+    // Enter login credentials and submit
+    await page.fill("#username", usernameString);
+    await page.fill("#password", passwordString);
     await page.click("#logonButton");
 
+    // Wait for navigation after login
     await delay(4000);
 
+    // Navigate to the classes page
     await page.goto(
       "https://aspen.cpsd.us/aspen/portalClassList.do?navkey=academics.classes.list",
     );
 
+    // Scrape class information
     const classes = await page.evaluate(() => {
       const classRows = document.querySelectorAll(
         "table > tbody > tr.listCell",
       );
-
       return Array.from(classRows).map((row) => {
         const className = row
           .querySelector("td:nth-child(6)")
-          ?.textContent?.replace(/\n/g, "");
+          ?.textContent?.trim();
         const teacherName = row
           .querySelector("td:nth-child(4)")
-          ?.textContent?.replace(/\n/g, "");
-        const room = row
-          .querySelector("td:nth-child(5)")
-          ?.textContent?.replace(/\n/g, "");
-        const grade = row
-          .querySelector("td:nth-child(8  )")
-          ?.textContent?.replace(/\n/g, "");
+          ?.textContent?.trim();
+        const room = row.querySelector("td:nth-child(5)")?.textContent?.trim();
+        const grade = row.querySelector("td:nth-child(8)")?.textContent?.trim();
 
-        return {
-          className,
-          teacherName,
-          room,
-          grade,
-        };
+        return { className, teacherName, room, grade };
       });
     });
 
     console.log(classes);
 
+    // Close the browser
     await browser.close();
 
-    return NextResponse.json({ text: classes }, { status: 200 });
+    // Return the scraped class information as JSON
+    return new NextResponse(JSON.stringify({ text: classes }), { status: 200 });
   } catch (error) {
     console.error("Error during scraping:", error);
-    if (res.status) {
-      return NextResponse.json(
-        { error: "Internal Server Error" },
-        { status: 500 },
-      );
-    } else {
-      console.error("res object does not have a status function");
-    }
-
-    return NextResponse.json(
-      { error: "Internal Server Error" },
+    // Return a 500 Internal Server Error response if an error occurs
+    return new NextResponse(
+      JSON.stringify({ error: "Internal Server Error" }),
       { status: 500 },
     );
   }
