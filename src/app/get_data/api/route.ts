@@ -1,6 +1,7 @@
 "use server";
 
-import puppeteer from "puppeteer";
+const puppeteer = require("puppeteer-core");
+const chromeLambda = require("chrome-aws-lambda");
 import { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
@@ -22,7 +23,12 @@ export async function POST(req: NextRequest, res: NextResponse) {
   const passwordString = String(password);
 
   try {
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({
+      executablePath: await chromeLambda.executablePath,
+      args: chromeLambda.args,
+      headless: true,
+    });
+
     const page = await browser.newPage();
 
     await page.goto("https://aspen.cpsd.us/aspen/logon.do", {
