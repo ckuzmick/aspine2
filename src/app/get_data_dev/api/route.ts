@@ -65,9 +65,11 @@ export async function POST(req: NextRequest, res: NextResponse) {
       });
     });
 
+    await browser.close();
+
     console.log(classes);
 
-    await browser.close();
+    cookies().set("classData", JSON.stringify(classes));
 
     return NextResponse.json({ text: classes }, { status: 200 });
   } catch (error) {
