@@ -11,6 +11,7 @@
   "dependencies": {
     "next": "14.1.0",
     "node-fetch": "^3.3.2",
+    "playwright": "^1.41.2",
     "playwright-aws-lambda": "^0.10.0",
     "playwright-core": "^1.41.2",
     "react": "^18",
