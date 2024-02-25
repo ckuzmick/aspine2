@@ -55,7 +55,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
           .querySelector("td:nth-child(5)")
           ?.textContent?.replace(/\n/g, "");
         const grade = row
-          .querySelector("td:nth-child(8)")
+          .querySelector("td:nth-child(8  )")
           ?.textContent?.replace(/\n/g, "");
 
         return {
