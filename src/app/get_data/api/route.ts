@@ -13,8 +13,6 @@ function delay(time: number) {
 export async function POST(req: NextRequest, res: NextResponse) {
   const reqBody = await req.json();
 
-  console.log(reqBody);
-
   const { username, password } = reqBody;
 
   const usernameString = String(username);

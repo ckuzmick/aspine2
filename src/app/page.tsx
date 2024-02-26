@@ -7,8 +7,8 @@ export default function Home() {
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
-    const response = await fetch("/get_data/api", {
-      // const response = await fetch("/get_data_dev/api", {
+    // const response = await fetch("/get_data/api", {
+    const response = await fetch("/get_data_dev/api", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -19,7 +19,7 @@ export default function Home() {
     if (response.ok) {
       const data = await response.json();
       console.log(data);
-      window.location.href = "/gradebook";
+      window.location.href = "/dashboard";
     } else {
       console.log("Login failed");
     }
@@ -27,29 +27,27 @@ export default function Home() {
 
   return (
     <main>
-      <label>
-        Username:
+      <div className="login-box">
         <input
           type="text"
           name="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          placeholder="username"
         />
-      </label>
-      <br />
-      <label>
-        Password:
+        <br />
         <input
-          type="text"
+          type="password"
           name="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          placeholder="password"
         />
-      </label>
-      <br />
-      <button type="submit" onClick={handleLogin}>
-        Login
-      </button>
+        <br />
+        <button type="submit" onClick={handleLogin}>
+          Login
+        </button>
+      </div>
     </main>
   );
 }

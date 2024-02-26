@@ -1,14 +1,22 @@
+:root {
+  --background-color: #000000;
+  --text-color: rgb(255, 255, 255);
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
 button {
   padding: 5px;
   border-radius: 5px;
-  border: black 1px solid;
+  border: var(--text-color) 1px solid;
   cursor: pointer;
 }
 
 input {
-  padding: 5px;
   margin-bottom: 10px;
-  margin-left: 10px;
 }
 
 main {
@@ -31,7 +39,7 @@ h1 {
 .navlinks a {
   margin-left: 10px;
   text-decoration: none;
-  color: black;
+  color: var(--text-color);
   transition: .3s;
 }
 
@@ -41,7 +49,118 @@ h1 {
 
 .title-link {
   text-decoration: none;
-  color: black;
+  color: var(--text-color);
+}
+
+/* Dashboard */
+
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.dashboard-card {
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: .3s;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.gpa-card-main-text {
+  font-size: 96px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.login-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 4px white;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+
+button {
+  padding: 5px;
+  border-radius: 5px;
+  border: black 1px solid;
+  cursor: pointer;
+}
+
+.login-box button {
+  background-color: #000000;
+  color: white;
+  width: 100%;
+  border: 1px solid #ffffff;
+  border-radius: 0;
+  box-sizing: border-box;
+}
+
+.login-box button:hover {
+  border: 3px solid #ffffff;
+  padding: 3px;
+}
+
+.login-box input {
+  padding-bottom: 5px;
+  margin-bottom: 20px;
+  background-color: var(--background-color);
+  border-bottom: #ffffff 1px solid !important;
+  border: 0;
+  transition: .2s;
+  color: white;
+}
+
+.login-box input:focus {
+  outline: none;
+}
+
+main {
+  padding: 20px;
+}
+
+h1 {
+  margin: 0;
+}
+
+/* NavBar */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+}
+
+.navlinks a {
+  margin-left: 10px;
+  text-decoration: none;
+  color: var(--text-color);
+  transition: .3s;
+}
+
+.navlinks a:hover {
+  color: #b6b6b6;
+}
+
+.title-link {
+  text-decoration: none;
+  color: var(--text-color);
 }
 
 /* Dashboard */
@@ -71,4 +190,14 @@ h1 {
   font-size: 96px;
   font-weight: 800;
   text-align: center;
+}
+
+.login-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 4px white;
 }
